@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class BoardManager : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class BoardManager : MonoBehaviour
     public GameObject redPiecePrefab;
     public GameObject yellowPiecePrefab;
     public TextMeshProUGUI winnerText;
+    public TextMeshProUGUI turnText;
 
     private bool isRedTurn = true;
     private bool gameEnded = false;
@@ -21,6 +23,7 @@ public class BoardManager : MonoBehaviour
         board = new int[columns, rows];
 
         CreateBoard();
+        UpdateTurnText();
     }
 
     void CreateBoard()
@@ -85,6 +88,7 @@ public class BoardManager : MonoBehaviour
                 else
                 {
                     isRedTurn = !isRedTurn;
+                    UpdateTurnText();
                 }
 
                 piecePlaced = true;
@@ -139,5 +143,15 @@ public class BoardManager : MonoBehaviour
         }
 
         return count;
+    }
+
+    void UpdateTurnText()
+    {
+        turnText.text = isRedTurn ? "Vez do Vermelho" : "Vez do Amarelo";
+    }
+
+    public void RestartGame()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }
