@@ -154,4 +154,6 @@ public class BoardManager : MonoBehaviour
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
+    
+    
 }
