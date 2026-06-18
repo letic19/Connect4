@@ -12,6 +12,7 @@ public class BoardManager : MonoBehaviour
     public GameObject yellowPiecePrefab;
     public TextMeshProUGUI winnerText;
     public TextMeshProUGUI turnText;
+    public TCPConnection tcpConnection;
 
     private bool isRedTurn = true;
     private bool gameEnded = false;
@@ -52,11 +53,21 @@ public class BoardManager : MonoBehaviour
 
             int column = Mathf.RoundToInt(mousePosition.x + (columns / 2f) - 0.5f);
 
-            DropPiece(column);
+            LocalMove(column);
         }
     }
 
-    void DropPiece(int column)
+    public void LocalMove(int column)
+    {
+        DropPiece(column);
+
+        if (tcpConnection != null)
+        {
+            tcpConnection.SendMessageToOther("MOVE:" + column);
+        }
+    }
+
+    public void DropPiece(int column)
     {
         if (column < 0 || column >= columns)
             return;
