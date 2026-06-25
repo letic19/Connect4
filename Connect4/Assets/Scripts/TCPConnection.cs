@@ -20,6 +20,8 @@ public class TCPConnection : MonoBehaviour
 
     void Start()
     {
+        boardManager.isMyTurn = isServer;
+
         if (isServer)
             StartServer();
         else
@@ -93,9 +95,13 @@ public class TCPConnection : MonoBehaviour
 
                 if (message.StartsWith("MOVE:"))
                 {
-                    int column = int.Parse(message.Substring(5));
+                    string[] parts = message.Split(':');
 
-                    boardManager.DropPiece(column);
+                    int column = int.Parse(parts[1]);
+                    bool redTurn = parts[2] == "1";
+
+                    boardManager.DropPieceNetwork(column, redTurn);
+                    boardManager.isMyTurn = true;
                 }
 
             }

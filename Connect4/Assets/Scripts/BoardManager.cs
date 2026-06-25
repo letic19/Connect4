@@ -13,6 +13,7 @@ public class BoardManager : MonoBehaviour
     public TextMeshProUGUI winnerText;
     public TextMeshProUGUI turnText;
     public TCPConnection tcpConnection;
+    public bool isMyTurn;
 
     private bool isRedTurn = true;
     private bool gameEnded = false;
@@ -47,6 +48,9 @@ public class BoardManager : MonoBehaviour
     {
         if (gameEnded)
             return;
+
+        if (!isMyTurn)
+            return;
         if (Input.GetMouseButtonDown(0))
         {
             Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -59,12 +63,21 @@ public class BoardManager : MonoBehaviour
 
     public void LocalMove(int column)
     {
+        if (!isMyTurn)
+            return;
+
+        bool currentRedTurn = isRedTurn;
+
         DropPiece(column);
 
         if (tcpConnection != null)
         {
-            tcpConnection.SendMessageToOther("MOVE:" + column);
+            tcpConnection.SendMessageToOther(
+                "MOVE:" + column + ":" + (currentRedTurn ? "1" : "2")
+            );
         }
+
+        isMyTurn = false;
     }
 
     public void DropPiece(int column)
@@ -112,6 +125,13 @@ public class BoardManager : MonoBehaviour
         {
             Debug.Log("Coluna cheia!");
         }
+    }
+
+    public void DropPieceNetwork(int column, bool redTurn)
+    {
+        isRedTurn = redTurn;
+
+        DropPiece(column);
     }
 
     bool CheckWin(int column, int row)
@@ -165,6 +185,18 @@ public class BoardManager : MonoBehaviour
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
-    
-    
+
+    public void RemoteMove(int column)
+    {
+        DropPiece(column);
+
+        isMyTurn = true;
+    }
+
+    public bool IsRedTurn()
+    {
+        return isRedTurn;
+    }
+
+
 }
